@@ -39,8 +39,6 @@ const useInitializeMap = (
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      attribution:
-        '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map);
 
     return () => {
@@ -100,6 +98,7 @@ export const WorldMap = ({ showDayNight }: { showDayNight?: boolean }) => {
         width: '100vw',
         height: '100vh',
         border: '1px solid black',
+        boxSizing: 'border-box',
       }}
       ref={mapRoot}
     ></div>
