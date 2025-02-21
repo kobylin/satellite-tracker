@@ -17,6 +17,8 @@ Satellite tracker with Leaflet.js
 
 ## Start project
 
+> ⚠️ **Prerequisites:** This application requires ports 3000 and 3003 to be available on your system. Please ensure these ports are not in use by other applications before proceeding.
+
 ### Backend
 
 ```
@@ -32,3 +34,5 @@ cd frontend
 npm install
 npm run dev
 ```
+
+Web app will be accessible on http://localhost:3003/
