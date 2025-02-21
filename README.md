@@ -2,6 +2,8 @@
 
 Satellite tracker with Leaflet.js
 
+> For simplicity backend and frontend are in the same repository but for a real project they should be separated 🤓.
+
 > **Note:** At the moment only ISS satellite is tracked.
 
 ## Screenshot
@@ -24,7 +26,7 @@ Satellite tracker with Leaflet.js
 ```
 cd backend
 npm install
-npm run start
+npm start
 ```
 
 ### Frontend
@@ -32,7 +34,7 @@ npm run start
 ```
 cd frontend
 npm install
-npm run dev
+npm start
 ```
 
 Web app will be accessible on http://localhost:3003/
