@@ -18,8 +18,6 @@ export const SatellitesPage = () => {
     };
   }, []);
 
-  console.log(ISSPositionsHistory);
-
   const lastPosition = ISSPositionsHistory.length
     ? ISSPositionsHistory[ISSPositionsHistory.length - 1]
     : null;

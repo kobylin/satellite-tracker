@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import dayjs from 'dayjs';
+
 import { Position } from '../../types';
 
 export const SatelliteInfoBox = ({
@@ -31,6 +33,12 @@ export const SatelliteInfoBox = ({
         ISS
       </div>
       <br />
+      <div>
+        Updated at:{' '}
+        {lastPosition?.timestamp
+          ? dayjs(lastPosition?.timestamp * 1000).format('L LT')
+          : ''}
+      </div>
       <div>Latittude: {lastPosition?.lat}</div>
       <div>Longitude: {lastPosition?.lng}</div>
       <div>Height: 370-460 km</div>
