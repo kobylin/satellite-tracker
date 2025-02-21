@@ -1,5 +1,11 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
-import { Position } from '../types';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
+import { Position } from '../types/types';
 import { ISSSatelliteService } from '../services/satellites/ISS';
 
 export type SatelliteDataContextType = {
@@ -25,9 +31,9 @@ export const SatelliteDataProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [ISSPositionsHistory, setISSPositionsHistory] = useState<Position[]>(
-    []
-  );
+  const [ISSPositionsHistoryMap, setISSPositionsHistoryMap] = useState<
+    Map<number, Position>
+  >(new Map());
 
   const fetchLatestISSPosition = useCallback(async () => {
     const position = await issSatelliteService.getNowPosition();
@@ -36,13 +42,31 @@ export const SatelliteDataProvider = ({
       lng: position.longitude,
       timestamp: position.timestamp,
     };
-    setISSPositionsHistory(prev => [...prev, normalizedPosition]);
+    if (ISSPositionsHistoryMap.has(normalizedPosition.timestamp)) {
+      return normalizedPosition;
+    }
+    setISSPositionsHistoryMap(prev => {
+      const newMap = new Map(prev);
+      newMap.set(normalizedPosition.timestamp, normalizedPosition);
+      return newMap;
+    });
     return normalizedPosition;
   }, []);
 
+  const ISSPositionsHistory = useMemo(() => {
+    return [...ISSPositionsHistoryMap.entries()]
+      .sort((p1, p2) => {
+        return p1[0] - p2[0];
+      })
+      .map(p => p[1]);
+  }, [ISSPositionsHistoryMap]);
+
   return (
     <satelliteDataContext.Provider
-      value={{ ISSPositionsHistory, fetchLatestISSPosition }}
+      value={{
+        ISSPositionsHistory: ISSPositionsHistory,
+        fetchLatestISSPosition,
+      }}
     >
       {children}
     </satelliteDataContext.Provider>

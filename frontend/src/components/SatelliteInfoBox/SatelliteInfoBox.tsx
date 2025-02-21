@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 
-import { Position } from '../../types';
+import { Position } from '../../types/types';
 
 export const SatelliteInfoBox = ({
   onRefresh,

@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import L, { Map, Marker, Polyline } from 'leaflet';
+import terminator from '@joergdietrich/leaflet.terminator';
 import 'leaflet/dist/leaflet.css';
 import { useSatelliteData } from '../../providers/SatelliteDataProvider';
 
 import iconImage from '../../../public/satellite.png';
-
-console.log('iconImage', iconImage);
 
 const satelliteIcon = L.icon({
   iconUrl: iconImage, // or use imported SVG
@@ -29,6 +28,9 @@ export const WorldMap = ({ showDayNight }: { showDayNight?: boolean }) => {
     }
 
     const map = L.map(mapRoot.current).setView([0, 0], 2);
+    if (showDayNight) {
+      terminator().addTo(map);
+    }
     setMap(map);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -40,7 +42,7 @@ export const WorldMap = ({ showDayNight }: { showDayNight?: boolean }) => {
     return () => {
       map.remove();
     };
-  }, []);
+  }, [showDayNight]);
 
   useEffect(() => {
     if (!map || ISSPositionsHistory.length === 0) {

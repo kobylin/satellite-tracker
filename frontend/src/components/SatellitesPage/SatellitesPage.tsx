@@ -28,7 +28,7 @@ export const SatellitesPage = () => {
         onRefresh={fetchLatestISSPosition}
         lastPosition={lastPosition}
       />
-      <WorldMap />
+      <WorldMap showDayNight />
     </div>
   );
 };
