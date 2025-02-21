@@ -19,6 +19,7 @@ const PATH_STYLE = {
   opacity: 0.7,
 };
 
+// Custom hook to initialize and manage the Leaflet map instance
 const useInitializeMap = (
   mapRef: React.RefObject<HTMLDivElement | null>,
   showDayNight: boolean | undefined
@@ -59,11 +60,13 @@ export const WorldMap = ({ showDayNight }: { showDayNight?: boolean }) => {
 
   const map = useInitializeMap(mapRoot, showDayNight);
 
+  // Effect to update ISS position and path on the map
   useEffect(() => {
     if (!map || ISSPositionsHistory.length === 0) {
       return;
     }
 
+    // Clean up previous path and marker
     issPathRef.current?.remove();
     issSatelliteMarker.current?.remove();
 
@@ -73,10 +76,11 @@ export const WorldMap = ({ showDayNight }: { showDayNight?: boolean }) => {
       pos.lng,
     ]);
 
-    // Draw the polyline connecting all points
+    // Draw the path line showing ISS trajectory
     issPathRef.current = L.polyline(coordinates, PATH_STYLE);
     issPathRef.current.addTo(map);
 
+    // Place marker at the latest ISS position
     const lastPosition = ISSPositionsHistory[ISSPositionsHistory.length - 1];
     issSatelliteMarker.current = L.marker(
       {

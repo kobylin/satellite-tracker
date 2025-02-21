@@ -20,6 +20,7 @@ const satelliteDataContext = createContext<SatelliteDataContextType>({
   },
 });
 
+// Custom hook to access satellite data context
 export const useSatelliteData = () => {
   return useContext(satelliteDataContext);
 };
@@ -31,10 +32,12 @@ export const SatelliteDataProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  // Store ISS position history in a Map with timestamp as key
   const [ISSPositionsHistoryMap, setISSPositionsHistoryMap] = useState<
     Map<number, Position>
   >(new Map());
 
+  // Fetch and store the latest ISS position
   const fetchLatestISSPosition = useCallback(async () => {
     const position = await issSatelliteService.getNowPosition();
     const normalizedPosition = {
@@ -53,6 +56,7 @@ export const SatelliteDataProvider = ({
     return normalizedPosition;
   }, []);
 
+  // Convert position history map to sorted array
   const ISSPositionsHistory = useMemo(() => {
     return [...ISSPositionsHistoryMap.entries()]
       .sort(([timestamp1], [timestamp2]) => timestamp1 - timestamp2)
