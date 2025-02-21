@@ -6,28 +6,31 @@ import { useSatelliteData } from '../../providers/SatelliteDataProvider';
 
 import iconImage from '../../../public/satellite.png';
 
-const satelliteIcon = L.icon({
+const SATELLITE_ICON = L.icon({
   iconUrl: iconImage, // or use imported SVG
   iconSize: [32, 32], // size of the icon in pixels
   iconAnchor: [16, 16], // point of the icon which will correspond to marker's location
   popupAnchor: [0, -16], // point from which popups should open relative to iconAnchor
 });
 
-export const WorldMap = ({ showDayNight }: { showDayNight?: boolean }) => {
-  const mapRoot = useRef<HTMLDivElement>(null);
-  const issPathRef = useRef<Polyline>(null);
-  const issSatelliteMarker = useRef<Marker>(null);
+const PATH_STYLE = {
+  color: 'red',
+  weight: 2,
+  opacity: 0.7,
+};
 
+const useInitializeMap = (
+  mapRef: React.RefObject<HTMLDivElement | null>,
+  showDayNight: boolean | undefined
+) => {
   const [map, setMap] = useState<Map | null>(null);
 
-  const { ISSPositionsHistory } = useSatelliteData();
-
   useEffect(() => {
-    if (!mapRoot.current) {
+    if (!mapRef.current) {
       return;
     }
 
-    const map = L.map(mapRoot.current).setView([0, 0], 2);
+    const map = L.map(mapRef.current).setView([0, 0], 2);
     if (showDayNight) {
       terminator().addTo(map);
     }
@@ -42,12 +45,27 @@ export const WorldMap = ({ showDayNight }: { showDayNight?: boolean }) => {
     return () => {
       map.remove();
     };
-  }, [showDayNight]);
+  }, [showDayNight, mapRef]);
+
+  return map;
+};
+
+export const WorldMap = ({ showDayNight }: { showDayNight?: boolean }) => {
+  const mapRoot = useRef<HTMLDivElement>(null);
+  const issPathRef = useRef<Polyline>(null);
+  const issSatelliteMarker = useRef<Marker>(null);
+
+  const { ISSPositionsHistory } = useSatelliteData();
+
+  const map = useInitializeMap(mapRoot, showDayNight);
 
   useEffect(() => {
     if (!map || ISSPositionsHistory.length === 0) {
       return;
     }
+
+    issPathRef.current?.remove();
+    issSatelliteMarker.current?.remove();
 
     // Create array of coordinates for the polyline
     const coordinates: [number, number][] = ISSPositionsHistory.map(pos => [
@@ -55,22 +73,9 @@ export const WorldMap = ({ showDayNight }: { showDayNight?: boolean }) => {
       pos.lng,
     ]);
 
-    if (issPathRef.current) {
-      issPathRef.current.remove();
-    }
-
     // Draw the polyline connecting all points
-    issPathRef.current = L.polyline(coordinates, {
-      color: 'red',
-      weight: 2,
-      opacity: 0.7,
-    });
-
+    issPathRef.current = L.polyline(coordinates, PATH_STYLE);
     issPathRef.current.addTo(map);
-
-    if (issSatelliteMarker.current) {
-      issSatelliteMarker.current.remove();
-    }
 
     const lastPosition = ISSPositionsHistory[ISSPositionsHistory.length - 1];
     issSatelliteMarker.current = L.marker(
@@ -79,7 +84,7 @@ export const WorldMap = ({ showDayNight }: { showDayNight?: boolean }) => {
         lng: lastPosition.lng,
       },
       {
-        icon: satelliteIcon,
+        icon: SATELLITE_ICON,
       }
     );
     issSatelliteMarker.current.addTo(map);

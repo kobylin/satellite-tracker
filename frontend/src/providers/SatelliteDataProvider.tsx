@@ -55,10 +55,8 @@ export const SatelliteDataProvider = ({
 
   const ISSPositionsHistory = useMemo(() => {
     return [...ISSPositionsHistoryMap.entries()]
-      .sort((p1, p2) => {
-        return p1[0] - p2[0];
-      })
-      .map(p => p[1]);
+      .sort(([timestamp1], [timestamp2]) => timestamp1 - timestamp2)
+      .map(([, position]) => position);
   }, [ISSPositionsHistoryMap]);
 
   return (

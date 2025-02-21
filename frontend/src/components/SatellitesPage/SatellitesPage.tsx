@@ -3,19 +3,22 @@ import { SatelliteInfoBox } from '../SatelliteInfoBox/SatelliteInfoBox';
 import { WorldMap } from '../WorldMap/WorldMap';
 import { useSatelliteData } from '../../providers/SatelliteDataProvider';
 
+const POLLING_INTERVAL_MS = 10000;
+
 export const SatellitesPage = () => {
   const { fetchLatestISSPosition, ISSPositionsHistory } = useSatelliteData();
 
   useEffect(() => {
-    fetchLatestISSPosition();
-
-    const intervalId = setInterval(() => {
+    const pollISSPosition = () => {
       fetchLatestISSPosition();
-    }, 10000);
-
-    return () => {
-      clearInterval(intervalId);
     };
+
+    // Initial fetch
+    pollISSPosition();
+
+    const intervalId = setInterval(pollISSPosition, POLLING_INTERVAL_MS);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const lastPosition = ISSPositionsHistory.length
@@ -23,7 +26,7 @@ export const SatellitesPage = () => {
     : null;
 
   return (
-    <div>
+    <div className="satellites-page">
       <SatelliteInfoBox
         onRefresh={fetchLatestISSPosition}
         lastPosition={lastPosition}
