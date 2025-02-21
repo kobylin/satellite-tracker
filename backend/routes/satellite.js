@@ -4,7 +4,7 @@ const ISS = require('../services/satellites/ISS');
 
 const issSatelliteService = new ISS();
 
-router.get('/iss-now', async function (req, res, next) {
+router.get('/iss/now', async function (req, res, next) {
   try {
     const position = await issSatelliteService.getNow();
     res.send(position);
