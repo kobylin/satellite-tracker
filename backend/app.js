@@ -12,7 +12,6 @@ const satelliteCors = cors({
   allowedHeaders: ['Content-Type'],
 });
 
-const indexRouter = require('./routes/index');
 const satelliteRouter = require('./routes/satellite');
 
 const app = express();
@@ -27,7 +26,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
 app.use('/satellite', satelliteCors, satelliteRouter);
 
 // catch 404 and forward to error handler
